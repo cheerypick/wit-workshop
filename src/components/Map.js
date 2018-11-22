@@ -1,8 +1,60 @@
 import React, { Component } from 'react';
-import { GoogleApiWrapper, Map } from 'google-maps-react';
+import { GoogleApiWrapper, Map, Marker } from 'google-maps-react';
 
 
 class GoogleMapsContainer extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+          markers: []
+        }
+      }
+
+      componentDidMount() {
+        this.fetchStations();
+      }
+
+    fetchStations = () => {
+        fetch('https://cors-escape.herokuapp.com/https://oslobysykkel.no/api/v1/stations', {
+          headers: new Headers({
+            'Client-Identifier': '8169e66ebbaf26c18b758abaeaadba0e'
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          this.fetchAndSetAvailability(data.stations);
+        })
+        .catch(error => console.error(error))
+      }
+
+      fetchAndSetAvailability = (markers) => {
+        fetch('https://cors-escape.herokuapp.com/https://oslobysykkel.no/api/v1/stations/availability', {
+          headers: new Headers({
+            'Client-Identifier': '8169e66ebbaf26c18b758abaeaadba0e'
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          markers = markers.map((marker) => {
+            return Object.assign(marker, this.findStationById(data.stations, marker.id));
+          })
+          this.setState(
+            {
+              markers: markers
+            }
+          )
+        })
+        .catch(error => console.error(error))
+      }
+
+  findStationById = (stations, id) => {
+    if(stations.length && id) {
+      return stations.find(x => x.id === id).availability;
+    }
+  }
+
+
 
   render() {
     const style = {
@@ -16,6 +68,20 @@ class GoogleMapsContainer extends Component {
         google = { this.props.google }
         zoom = { 14 }
         initialCenter = {{ lat: 59.9139, lng: 10.7522 }}>
+
+        { this.state.markers.map(marker => (
+
+            <Marker
+                title = { marker.title }
+                id = { marker.id }
+                subtitle = { marker.subtitle }
+                bikes = { marker.bikes }
+                locks = { marker.locks }
+                onClick = { this.onMarkerClick }
+                position={{ lat: marker.center.latitude, lng: marker.center.longitude }}
+                key={ marker.id }
+            />
+        ))}
       </Map>
     );
   }
