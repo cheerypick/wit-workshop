@@ -1,3 +1,7 @@
+## Workshop instructions
+
+https://docs.google.com/document/d/1MgALBtb7z8EmcV54NYqByhRaQCSl5PDix3OLcATikY8/edit?usp=sharing
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
