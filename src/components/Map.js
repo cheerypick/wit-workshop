@@ -120,7 +120,7 @@ class GoogleMapsContainer extends Component {
               <h2>{ this.state.activeMarker.subtitle }</h2>
               <p>{ this.state.activeMarker.bikes }</p>
               <p>{ this.state.activeMarker.locks }</p>
-            </div>
+            </div>±
         </InfoWindow>
       </Map>
     );
