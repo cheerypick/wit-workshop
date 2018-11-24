@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { GoogleApiWrapper, Map, Marker, InfoWindow } from 'google-maps-react';
+import bikeIcon from '../../src/assets/bike.svg';
+import noBikesIcon from '../../src/assets/no-bike.svg';
 
 
 class GoogleMapsContainer extends Component {
@@ -77,6 +79,16 @@ class GoogleMapsContainer extends Component {
       height: '75vh',
     }
 
+    let availableBikesImage = {
+      url: bikeIcon,
+      scaledSize: new this.props.google.maps.Size(40, 40)
+    };
+
+    let noAvailableBikesImage = {
+      url: noBikesIcon,
+      scaledSize: new this.props.google.maps.Size(40, 40)
+    };
+
     return (
       <Map
         style = { style }
@@ -96,6 +108,7 @@ class GoogleMapsContainer extends Component {
                 onClick = { this.onMarkerClick }
                 position={{ lat: marker.center.latitude, lng: marker.center.longitude }}
                 key={ marker.id }
+                icon = { marker.bikes === 0 ? noAvailableBikesImage : availableBikesImage  }
             />
         ))}
 
