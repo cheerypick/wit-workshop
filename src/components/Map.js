@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { GoogleApiWrapper, Map, Marker, InfoWindow } from 'google-maps-react';
 import bikeIcon from '../../src/assets/bike.svg';
 import noBikesIcon from '../../src/assets/no-bike.svg';
+import MediaCard from './Card';
 
 
 class GoogleMapsContainer extends Component {
@@ -115,12 +116,13 @@ class GoogleMapsContainer extends Component {
         <InfoWindow
           marker = { this.state.activeMarker }
           visible = { this.state.showingInfoWindow }>
-            <div>
-              <h1>{ this.state.activeMarker.title }</h1>
-              <h2>{ this.state.activeMarker.subtitle }</h2>
-              <p>{ this.state.activeMarker.bikes }</p>
-              <p>{ this.state.activeMarker.locks }</p>
-            </div>±
+            <MediaCard
+              title= { this.state.activeMarker.title }
+              subtitle= { this.state.activeMarker.subtitle }
+              bikes = { this.state.activeMarker.bikes }
+              locks = { this.state.activeMarker.locks }
+              id = { this.state.activeMarker.id }
+            />
         </InfoWindow>
       </Map>
     );
