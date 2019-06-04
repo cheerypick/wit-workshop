@@ -21,6 +21,8 @@ class GoogleMapsContainer extends Component {
     }
 
     onMarkerClick = (props, marker, e) => {
+
+      console.log(marker);
       this.setState({
         activeMarker: marker,
         showingInfoWindow: true
@@ -36,28 +38,31 @@ class GoogleMapsContainer extends Component {
     }
 
     fetchStations = () => {
-        fetch('https://cors-escape.herokuapp.com/https://oslobysykkel.no/api/v1/stations', {
+        fetch('https://cors-anywhere.herokuapp.com/https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json', {
           headers: new Headers({
-            'Client-Identifier': '8169e66ebbaf26c18b758abaeaadba0e'
+            'Client-Identifier': 'acn-workshop'
           })
         })
         .then(response => response.json())
         .then(data => {
-          this.fetchAndSetAvailability(data.stations);
+          this.fetchAndSetAvailability(data.data.stations);
         })
         .catch(error => console.error(error))
       }
 
     fetchAndSetAvailability = (markers) => {
-      fetch('https://cors-escape.herokuapp.com/https://oslobysykkel.no/api/v1/stations/availability', {
+
+      fetch('https://cors-anywhere.herokuapp.com/https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json', {
         headers: new Headers({
-          'Client-Identifier': '8169e66ebbaf26c18b758abaeaadba0e'
+          'Client-Identifier': 'acn-workshop'
         })
       })
       .then(response => response.json())
       .then(data => {
+        console.log(data)
         markers = markers.map((marker) => {
-          return Object.assign(marker, this.findStationById(data.stations, marker.id));
+          console.log(marker)
+          return Object.assign(marker, this.findStationById(data.data.stations, marker.station_id));
         })
         this.setState(
           {
@@ -68,9 +73,9 @@ class GoogleMapsContainer extends Component {
       .catch(error => console.error(error))
     }
 
-  findStationById = (stations, id) => {
-    if(stations.length && id) {
-      return stations.find(x => x.id === id).availability;
+  findStationById = (stations, station_id) => {
+    if(stations.length && station_id) {
+      return stations.find(x => x.station_id === station_id);
     }
   }
 
@@ -102,14 +107,14 @@ class GoogleMapsContainer extends Component {
 
             <Marker
                 title = { marker.title }
-                id = { marker.id }
+                id = { marker.station_id }
                 subtitle = { marker.subtitle }
-                bikes = { marker.bikes }
-                locks = { marker.locks }
+                bikes = { marker.num_bikes_available }
+                locks = { marker.num_docks_available }
                 onClick = { this.onMarkerClick }
-                position={{ lat: marker.center.latitude, lng: marker.center.longitude }}
-                key={ marker.id }
-                icon = { marker.bikes === 0 ? noAvailableBikesImage : availableBikesImage  }
+                position={{ lat: marker.lat, lng: marker.lon }}
+                key={ marker.station_id }
+                icon = { marker.num_bikes_available === 0 ? noAvailableBikesImage : availableBikesImage  }
             />
         ))}
 
@@ -121,7 +126,7 @@ class GoogleMapsContainer extends Component {
               subtitle= { this.state.activeMarker.subtitle }
               bikes = { this.state.activeMarker.bikes }
               locks = { this.state.activeMarker.locks }
-              id = { this.state.activeMarker.id }
+              id = { this.state.activeMarker.station_id }
             />
         </InfoWindow>
       </Map>
@@ -129,5 +134,5 @@ class GoogleMapsContainer extends Component {
   }
 }
 export default GoogleApiWrapper({
-    apiKey: 'AIzaSyDOTfCM2U_gpYrE7KAZMiv8XheW2nSpff4'
+    apiKey: 'AIzaSyA37LgFvU9uZ_mTV9TwsMXRK9iz4mjvEfE'
 })(GoogleMapsContainer)
